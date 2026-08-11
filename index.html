@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beach Gathering: Seafood Check 🏖️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ====================================================================
+     PENGATURAN WAJIB SEBELUM DEPLOY — baca README di bagian bawah file
+     atau instruksi yang diberikan di chat.
+     ==================================================================== */
+  :root {
+    --cream: #fdfbf7;
+    --peach: #f3c7a6;
+    --peach-deep: #e8a97c;
+    --sage: #a9bfa0;
+    --sage-deep: #8aa87e;
+    --latte: #c8a780;
+    --latte-deep: #a8815a;
+    --ink: #5c4a3d;
+    --ink-soft: #8a7a6d;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .hero-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 140px;
+    background: linear-gradient(180deg, rgba(243,199,166,0.35), transparent);
+    pointer-events: none;
+  }
+  .page {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+    position: relative;
+  }
+  .eyebrow {
+    display: block;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .eyebrow span {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--latte-deep);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+  }
+  h1.title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    text-align: center;
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+  p.subtitle {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0 auto 28px;
+    max-width: 440px;
+  }
+  .card {
+    background: var(--white);
+    border-radius: 28px;
+    padding: 26px 24px 30px;
+    box-shadow: 0 16px 40px -20px rgba(92,74,61,0.35);
+    border: 1px solid #f3e9db;
+    margin-bottom: 22px;
+  }
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 22px 0 10px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+  }
+  .section-label:first-child { margin-top: 0; }
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 16px;
+    border-radius: 16px;
+    border: 2px solid #eee1d3;
+    font-size: 15px;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    color: var(--ink);
+    background: #fffdfa;
+  }
+  input[type="text"]:focus { border-color: var(--latte-deep); }
+  input.field-error { border-color: #e0806a; }
+
+  .option-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .option-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    padding: 16px 18px;
+    border-radius: 20px;
+    border: 2px solid #eee1d3;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px -3px rgba(92,74,61,0.12);
+    font-family: 'Nunito', sans-serif;
+  }
+  .option-card.dense { padding: 12px 16px; }
+  .option-card:hover { border-color: var(--accent, var(--latte-deep)); }
+  .option-card.active {
+    border-color: var(--accent, var(--latte-deep));
+    background: color-mix(in srgb, var(--accent, var(--latte-deep)) 13%, white);
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--accent, var(--latte-deep)) 55%, transparent);
+    transform: translateY(-2px);
+  }
+  .option-emoji { font-size: 28px; line-height: 1; flex-shrink: 0; }
+  .option-card.dense .option-emoji { font-size: 24px; }
+  .option-text { flex: 1; }
+  .option-label { font-weight: 800; font-size: 16px; }
+  .option-card.dense .option-label { font-size: 14.5px; }
+  .option-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+  .option-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #ddd0bf;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .option-card.active .option-dot {
+    border-color: var(--accent, var(--latte-deep));
+    background: var(--accent, var(--latte-deep));
+  }
+  .option-dot::after {
+    content: "";
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--white);
+    display: none;
+  }
+  .option-card.active .option-dot::after { display: block; }
+
+  .error-text { color: #c9553c; font-size: 12.5px; margin-top: 6px; }
+
+  #menu-section { animation: fadeSlideIn 0.35s ease; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 26px;
+    padding: 15px 20px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg, var(--peach-deep), var(--latte-deep));
+    color: var(--white);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16.5px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgba(200,120,80,0.6);
+  }
+  .submit-btn:disabled { opacity: 0.7; cursor: default; }
+  .submit-btn:active { transform: scale(0.98); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--sage-deep);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14.5px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .center { text-align: center; }
+
+  .back-btn {
+    background: var(--white);
+    border: 2px solid #eee1d3;
+    border-radius: 14px;
+    padding: 8px 16px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink);
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--sage);
+    color: #2f4a2e;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #2f4a2e;
+    display: inline-block;
+    animation: pulseDot 1.4s infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .result-row { margin-bottom: 20px; }
+  .result-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .result-name { font-weight: 800; font-size: 14.5px; }
+  .result-pct { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 14px; }
+  .bar-track {
+    position: relative; height: 16px; border-radius: 999px;
+    background: #f4ece0; overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute; inset: 0; width: 0%;
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.34,1.4,0.64,1);
+  }
+  .people-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid;
+  }
+
+  .drink-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .drink-card {
+    background: #fffaf3; border-radius: 18px; padding: 14px;
+    border: 1px solid #f3e9db;
+  }
+  .drink-emoji { font-size: 22px; margin-bottom: 4px; }
+  .drink-label { font-size: 12.5px; font-weight: 800; margin-bottom: 6px; }
+  .drink-bar-track { height: 10px; border-radius: 999px; background: #f0e6d6; overflow: hidden; margin-bottom: 4px; }
+  .drink-bar-fill { height: 100%; width: 0%; background: var(--latte-deep); border-radius: 999px; transition: width 0.6s ease; }
+  .drink-meta { font-size: 11.5px; color: var(--ink-soft); font-weight: 700; }
+
+  .empty-note { text-align: center; color: var(--ink-soft); font-size: 14px; margin-top: 20px; }
+
+  .notice {
+    position: sticky; top: 0; z-index: 50;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13.5px;
+    padding: 12px 16px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .notice.setup { background: var(--peach); color: var(--latte-deep); border-bottom: 2px solid var(--peach-deep); }
+  .notice.error { background: #fdecea; color: #8a3a26; border-bottom: 2px solid #e0806a; }
+  .notice-close {
+    background: none; border: none; font-weight: 800; cursor: pointer;
+    font-size: 15px; line-height: 1;
+  }
+
+  .wave { display: block; width: 100%; height: 20px; opacity: 0.35; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="notice-slot"></div>
+<div class="hero-glow"></div>
+
+<!-- ================= FORM PAGE ================= -->
+<div id="form-page" class="page">
+  <span class="eyebrow"><span>🌴 OFFICE BEACH TRIP</span></span>
+  <h1 class="title">Beach Gathering: Seafood Check 🏖️</h1>
+  <p class="subtitle">Biar liburan kita ke pantai aman, perut kenyang, dan nggak ada yang gatal-gatal, tolong isi data ini ya!</p>
+
+  <div class="card">
+    <div class="section-label">✍️ Nama Lengkap</div>
+    <input type="text" id="nama-input" placeholder="Tulis nama kamu di sini..." />
+    <div class="error-text hidden" id="err-nama">Nama wajib diisi ya, biar panitia nggak bingung 😅</div>
+
+    <div class="section-label">🏝️ Kehadiran</div>
+    <div class="option-list" id="hadir-options"></div>
+    <div class="error-text hidden" id="err-hadir">Pilih dulu status kehadiran kamu</div>
+
+    <div id="attend-fields">
+    <div class="section-label">🐚 Status Alergi / Seafood</div>
+    <div class="option-list" id="status-options"></div>
+    <div class="error-text hidden" id="err-status">Pilih dulu status seafood kamu</div>
+
+    <div id="menu-section" class="hidden">
+      <div class="section-label">🍽️ Menu Alternatif</div>
+      <div class="option-list" id="menu-options"></div>
+      <div class="error-text hidden" id="err-menu">Pilih menu alternatif kamu</div>
+    </div>
+
+    <div class="section-label">🏊 Kemampuan Berenang</div>
+    <div class="option-list" id="berenang-options"></div>
+    <div class="error-text hidden" id="err-berenang">Pilih dulu kemampuan berenang kamu</div>
+
+    <div class="section-label">🍌 Banana Boat</div>
+    <div class="option-list" id="banana-options"></div>
+    <div class="error-text hidden" id="err-banana">Pilih dulu mau ikut banana boat atau tidak</div>
+
+    <div class="section-label">🥤 Minuman Favorit di Pantai</div>
+    <div class="option-grid" id="drink-options"></div>
+    <div class="error-text hidden" id="err-minuman">Pilih minuman impianmu di pantai</div>
+    </div>
+
+    <div class="error-text hidden center" id="err-submit"></div>
+
+    <button class="submit-btn" id="submit-btn">Kirim & Lihat Hasil Live 🚀</button>
+  </div>
+
+  <div class="center">
+    <button class="link-btn" id="view-results-btn">📊 Lihat Hasil Polling Live</button>
+  </div>
+</div>
+
+<!-- ================= RESULTS PAGE ================= -->
+<div id="results-page" class="page hidden">
+  <button class="back-btn" id="back-btn">← Kembali ke Form</button>
+
+  <div class="center">
+    <span class="live-pill"><span class="live-dot"></span>LIVE</span>
+  </div>
+  <h1 class="title" style="font-size:28px;">Hasil Polling Beach Gathering 🌊</h1>
+  <p class="subtitle" id="total-count" style="margin-bottom:26px;">Memuat data...</p>
+
+  <div class="card">
+    <h2 style="font-family:'Fredoka',sans-serif;font-weight:600;font-size:17px;margin:0 0 18px;">🏝️ Kehadiran</h2>
+    <div id="hadir-results"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-family:'Fredoka',sans-serif;font-weight:600;font-size:17px;margin:0 0 18px;">🐚 Status Seafood</h2>
+    <div id="status-results"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-family:'Fredoka',sans-serif;font-weight:600;font-size:17px;margin:0 0 18px;">🏊 Kemampuan Berenang</h2>
+    <div id="berenang-results"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-family:'Fredoka',sans-serif;font-weight:600;font-size:17px;margin:0 0 18px;">🍌 Banana Boat</h2>
+    <div id="banana-results"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-family:'Fredoka',sans-serif;font-weight:600;font-size:17px;margin:0 0 16px;">🥤 Minuman Favorit</h2>
+    <div class="drink-grid" id="drink-results"></div>
+  </div>
+
+  <p class="empty-note hidden" id="empty-note">Belum ada yang isi survey. Ajak tim kamu isi form dulu, yuk! 🐚</p>
+</div>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#a9bfa0"></path>
+</svg>
+
+<script>
+/* ============================================================
+   1) KONFIGURASI WAJIB
+   ------------------------------------------------------------
+   Ganti nilai JSONBLOB_URL di bawah ini dengan URL blob kamu
+   sendiri dari https://jsonblob.com (gratis, tanpa akun).
+   Caranya ada di instruksi chat / README.
+   ============================================================ */
+const JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob/019ff12e-9360-7c41-abbe-1cbe122141e4";
+
+/* ============================================================
+   2) DATA OPSI
+   ============================================================ */
+const HADIR_OPTIONS = [
+  { id: "hadir", emoji: "✅", label: "Bisa Hadir", sub: "Siap ikut gathering ke pantai", color: "#8aa87e" },
+  { id: "tidak-hadir", emoji: "❌", label: "Tidak Bisa Hadir", sub: "Berhalangan, mohon maaf", color: "#d98a7a" },
+];
+const BERENANG_OPTIONS = [
+  { id: "bisa", emoji: "🏊", label: "Bisa Berenang", sub: "Siap nyemplung ke laut", color: "#8aa87e" },
+  { id: "tidak-bisa", emoji: "🙅", label: "Tidak Bisa Berenang", sub: "Cukup main air di pinggir aja", color: "#e8a97c" },
+];
+const BANANA_OPTIONS = [
+  { id: "ikut", emoji: "🍌", label: "Ikut Banana Boat", sub: "Siap kocak-kocakan di atas ombak", color: "#8aa87e" },
+  { id: "tidak-ikut", emoji: "🙅‍♀️", label: "Tidak Ikut Banana Boat", sub: "Nonton dari pinggir pantai aja", color: "#e8a97c" },
+];
+const STATUS_OPTIONS = [
+  { id: "aman", emoji: "🦐", label: "Aman Banget!", sub: "Siap sikat semua seafood", color: "#a9bfa0", needsMenu: false },
+  { id: "alergi-tertentu", emoji: "🦀", label: "Alergi Seafood Tertentu", sub: "Misal: udang / kepiting saja", color: "#e8a97c", needsMenu: true },
+  { id: "alergi-total", emoji: "🚫", label: "Alergi TOTAL Seafood", sub: "Sama sekali nggak bisa makan seafood", color: "#d98a7a", needsMenu: true },
+  { id: "diet", emoji: "🥗", label: "Diet Khusus / Vegetarian", sub: "Punya pantangan makanan sendiri", color: "#a8815a", needsMenu: true },
+];
+const MENU_OPTIONS = [
+  { id: "ayam", emoji: "🍗", label: "Ayam Bakar / Goreng" },
+  { id: "sapi", emoji: "🥩", label: "Daging Sapi" },
+  { id: "tahu-tempe", emoji: "🌱", label: "Tahu & Tempe / Sayuran" },
+];
+const DRINK_OPTIONS = [
+  { id: "kelapa", emoji: "🥥", label: "Es Kelapa Muda" },
+  { id: "jeruk", emoji: "🍊", label: "Es Jeruk" },
+  { id: "teh", emoji: "🧊", label: "Es Teh" },
+  { id: "coldbrew", emoji: "☕", label: "Kopi Cold Brew" },
+];
+
+/* ============================================================
+   3) STATE
+   ============================================================ */
+let selectedStatus = null;
+let selectedMenu = null;
+let selectedMinuman = null;
+let selectedHadir = null;
+let selectedBerenang = null;
+let selectedBanana = null;
+let refreshTimer = null;
+
+/* ============================================================
+   4) STORAGE HELPERS (JSONBlob backend)
+   ============================================================ */
+function isConfigured() {
+  return JSONBLOB_URL && !JSONBLOB_URL.includes("REPLACE_WITH_YOUR_JSONBLOB_URL");
+}
+
+async function readAllResponses() {
+  if (!isConfigured()) return [];
+  const res = await fetch(JSONBLOB_URL, {
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("Gagal ambil data (status " + res.status + ")");
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function writeAllResponses(list) {
+  const res = await fetch(JSONBLOB_URL, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(list),
+  });
+  if (!res.ok) throw new Error("Gagal simpan data (status " + res.status + ")");
+}
+
+async function addResponse(entry) {
+  let lastErr;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const current = await readAllResponses();
+      const updated = current.concat([entry]);
+      await writeAllResponses(updated);
+      return updated;
+    } catch (e) {
+      lastErr = e;
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
+  }
+  throw lastErr;
+}
+
+/* ============================================================
+   5) NOTICE BANNER
+   ============================================================ */
+function showNotice(kind, html) {
+  const slot = document.getElementById("notice-slot");
+  slot.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "notice " + kind;
+  div.innerHTML =
+    '<span style="font-size:18px;line-height:1;">' + (kind === "setup" ? "⚙️" : "🌊") + "</span>" +
+    '<span style="flex:1;">' + html + "</span>" +
+    '<button class="notice-close">✕</button>';
+  div.querySelector(".notice-close").onclick = () => (slot.innerHTML = "");
+  slot.appendChild(div);
+}
+
+if (!isConfigured()) {
+  showNotice(
+    "setup",
+    "<strong>Belum di-setup!</strong> Isi <code>JSONBLOB_URL</code> di bagian atas kode ini dengan URL blob kamu dari jsonblob.com supaya data bisa tersimpan &amp; live."
+  );
+}
+
+/* ============================================================
+   6) RENDER: FORM PAGE OPTIONS
+   ============================================================ */
+function renderOptionCard(container, opt, groupState, onSelect, dense) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "option-card" + (dense ? " dense" : "");
+  btn.style.setProperty("--accent", opt.color || "#a8815a");
+  btn.innerHTML =
+    '<span class="option-emoji">' + opt.emoji + "</span>" +
+    '<span class="option-text">' +
+      '<div class="option-label">' + opt.label + "</div>" +
+      (opt.sub ? '<div class="option-sub">' + opt.sub + "</div>" : "") +
+    "</span>" +
+    '<span class="option-dot"></span>';
+  btn.addEventListener("click", () => onSelect(opt.id));
+  container.appendChild(btn);
+}
+
+function renderStatusOptions() {
+  const container = document.getElementById("status-options");
+  container.innerHTML = "";
+  STATUS_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, opt, selectedStatus, (id) => {
+      selectedStatus = id;
+      selectedMenu = null;
+      renderStatusOptions();
+      renderMenuOptions();
+    }, false);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", STATUS_OPTIONS[i].id === selectedStatus);
+  });
+}
+
+function renderMenuOptions() {
+  const section = document.getElementById("menu-section");
+  const statusMeta = STATUS_OPTIONS.find((s) => s.id === selectedStatus);
+  const needsMenu = statusMeta ? statusMeta.needsMenu : false;
+  section.classList.toggle("hidden", !needsMenu);
+  if (!needsMenu) return;
+
+  const container = document.getElementById("menu-options");
+  container.innerHTML = "";
+  MENU_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, { ...opt, color: "#8aa87e" }, selectedMenu, (id) => {
+      selectedMenu = id;
+      renderMenuOptions();
+    }, true);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", MENU_OPTIONS[i].id === selectedMenu);
+  });
+}
+
+function renderDrinkOptions() {
+  const container = document.getElementById("drink-options");
+  container.innerHTML = "";
+  DRINK_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, { ...opt, color: "#a8815a" }, selectedMinuman, (id) => {
+      selectedMinuman = id;
+      renderDrinkOptions();
+    }, true);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", DRINK_OPTIONS[i].id === selectedMinuman);
+  });
+}
+
+function renderHadirOptions() {
+  const container = document.getElementById("hadir-options");
+  container.innerHTML = "";
+  HADIR_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, opt, selectedHadir, (id) => {
+      selectedHadir = id;
+      renderHadirOptions();
+    }, false);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", HADIR_OPTIONS[i].id === selectedHadir);
+  });
+  document.getElementById("attend-fields").classList.toggle(
+    "hidden",
+    selectedHadir === "tidak-hadir"
+  );
+}
+
+function renderBerenangOptions() {
+  const container = document.getElementById("berenang-options");
+  container.innerHTML = "";
+  BERENANG_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, opt, selectedBerenang, (id) => {
+      selectedBerenang = id;
+      renderBerenangOptions();
+    }, false);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", BERENANG_OPTIONS[i].id === selectedBerenang);
+  });
+}
+
+function renderBananaOptions() {
+  const container = document.getElementById("banana-options");
+  container.innerHTML = "";
+  BANANA_OPTIONS.forEach((opt) => {
+    renderOptionCard(container, opt, selectedBanana, (id) => {
+      selectedBanana = id;
+      renderBananaOptions();
+    }, false);
+  });
+  [...container.children].forEach((el, i) => {
+    el.classList.toggle("active", BANANA_OPTIONS[i].id === selectedBanana);
+  });
+}
+
+renderStatusOptions();
+renderMenuOptions();
+renderDrinkOptions();
+renderHadirOptions();
+renderBerenangOptions();
+renderBananaOptions();
+
+/* ============================================================
+   7) SUBMIT
+   ============================================================ */
+function setError(id, show) {
+  document.getElementById(id).classList.toggle("hidden", !show);
+}
+
+document.getElementById("submit-btn").addEventListener("click", async () => {
+  const namaInput = document.getElementById("nama-input");
+  const nama = namaInput.value.trim();
+  const isAttending = selectedHadir === "hadir";
+  const statusMeta = STATUS_OPTIONS.find((s) => s.id === selectedStatus);
+  const needsMenu = isAttending && statusMeta ? statusMeta.needsMenu : false;
+
+  let ok = true;
+  setError("err-nama", false);
+  setError("err-hadir", false);
+  setError("err-status", false);
+  setError("err-menu", false);
+  setError("err-berenang", false);
+  setError("err-banana", false);
+  setError("err-minuman", false);
+  setError("err-submit", false);
+  namaInput.classList.remove("field-error");
+
+  if (!nama) { setError("err-nama", true); namaInput.classList.add("field-error"); ok = false; }
+  if (!selectedHadir) { setError("err-hadir", true); ok = false; }
+  if (isAttending) {
+    if (!selectedStatus) { setError("err-status", true); ok = false; }
+    if (needsMenu && !selectedMenu) { setError("err-menu", true); ok = false; }
+    if (!selectedBerenang) { setError("err-berenang", true); ok = false; }
+    if (!selectedBanana) { setError("err-banana", true); ok = false; }
+    if (!selectedMinuman) { setError("err-minuman", true); ok = false; }
+  }
+  if (!ok) return;
+
+  if (!isConfigured()) {
+    showNotice("setup", "<strong>Belum di-setup!</strong> Isi <code>JSONBLOB_URL</code> dulu di kode ini sebelum data bisa disimpan.");
+    return;
+  }
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "Menyimpan...";
+
+  const entry = {
+    id: Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+    nama,
+    hadir: selectedHadir,
+    status: isAttending ? selectedStatus : null,
+    menu: isAttending && needsMenu ? selectedMenu : null,
+    berenang: isAttending ? selectedBerenang : null,
+    banana: isAttending ? selectedBanana : null,
+    minuman: isAttending ? selectedMinuman : null,
+    ts: Date.now(),
+  };
+
+  try {
+    await addResponse(entry);
+    showResultsPage();
+  } catch (e) {
+    setError("err-submit", true);
+    document.getElementById("err-submit").textContent =
+      "Gagal menyimpan data: " + e.message + ". Coba lagi ya.";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Kirim & Lihat Hasil Live 🚀";
+  }
+});
+
+/* ============================================================
+   8) RESULTS PAGE
+   ============================================================ */
+function pctColor(hex, alpha) {
+  return hex; // solid fill; chips use inline rgba below
+}
+
+async function refreshResults() {
+  let responses = [];
+  try {
+    responses = await readAllResponses();
+  } catch (e) {
+    showNotice("error", "<strong>Gagal memuat hasil:</strong> " + e.message);
+    return;
+  }
+  const total = responses.length;
+
+  document.getElementById("total-count").textContent =
+    total + " orang sudah isi survey";
+
+  function renderSimpleResultBlock(containerId, options, getValue, includeNames) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    options.forEach((opt) => {
+      const people = responses.filter((r) => getValue(r) === opt.id);
+      const pct = total > 0 ? Math.round((people.length / total) * 100) : 0;
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.innerHTML =
+        '<div class="result-head">' +
+          '<span class="result-name">' + opt.emoji + " " + opt.label + "</span>" +
+          '<span class="result-pct" style="color:' + opt.color + ';">' + pct + "% (" + people.length + ")</span>" +
+        "</div>" +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + "%;background:" + opt.color + ';"></div></div>';
+
+      if (includeNames && people.length > 0) {
+        const chipsWrap = document.createElement("div");
+        chipsWrap.className = "people-chips";
+        people.forEach((p) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.style.background = opt.color + "22";
+          chip.style.borderColor = opt.color + "55";
+          chip.style.color = "#5c4a3d";
+          chip.textContent = p.nama;
+          chipsWrap.appendChild(chip);
+        });
+        row.appendChild(chipsWrap);
+      }
+      container.appendChild(row);
+    });
+  }
+
+  renderSimpleResultBlock("hadir-results", HADIR_OPTIONS, (r) => r.hadir, true);
+  // Berenang & banana boat cuma relevan buat yang bisa hadir, jadi dihitung
+  // dari yang statusnya "hadir" saja supaya persentasenya nggak bias.
+  const hadirResponses = responses.filter((r) => r.hadir === "hadir");
+
+  function renderAttendGatedBlock(containerId, options, getValue) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    const subTotal = hadirResponses.length;
+    options.forEach((opt) => {
+      const people = hadirResponses.filter((r) => getValue(r) === opt.id);
+      const pct = subTotal > 0 ? Math.round((people.length / subTotal) * 100) : 0;
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.innerHTML =
+        '<div class="result-head">' +
+          '<span class="result-name">' + opt.emoji + " " + opt.label + "</span>" +
+          '<span class="result-pct" style="color:' + opt.color + ';">' + pct + "% (" + people.length + ")</span>" +
+        "</div>" +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + "%;background:" + opt.color + ';"></div></div>';
+      if (people.length > 0) {
+        const chipsWrap = document.createElement("div");
+        chipsWrap.className = "people-chips";
+        people.forEach((p) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.style.background = opt.color + "22";
+          chip.style.borderColor = opt.color + "55";
+          chip.style.color = "#5c4a3d";
+          chip.textContent = p.nama;
+          chipsWrap.appendChild(chip);
+        });
+        row.appendChild(chipsWrap);
+      }
+      container.appendChild(row);
+    });
+    if (subTotal === 0) {
+      const note = document.createElement("p");
+      note.className = "empty-note";
+      note.style.marginTop = "8px";
+      note.textContent = "Belum ada data — menunggu yang bisa hadir isi form.";
+      container.appendChild(note);
+    }
+  }
+
+  renderAttendGatedBlock("berenang-results", BERENANG_OPTIONS, (r) => r.berenang);
+  renderAttendGatedBlock("banana-results", BANANA_OPTIONS, (r) => r.banana);
+
+  const statusContainer = document.getElementById("status-results");
+  statusContainer.innerHTML = "";
+  STATUS_OPTIONS.forEach((opt) => {
+    const people = responses.filter((r) => r.status === opt.id);
+    const pct = total > 0 ? Math.round((people.length / total) * 100) : 0;
+    const row = document.createElement("div");
+    row.className = "result-row";
+    row.innerHTML =
+      '<div class="result-head">' +
+        '<span class="result-name">' + opt.emoji + " " + opt.label + "</span>" +
+        '<span class="result-pct" style="color:' + opt.color + ';">' + pct + "% (" + people.length + ")</span>" +
+      "</div>" +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + "%;background:" + opt.color + ';"></div></div>';
+
+    if (people.length > 0) {
+      const chipsWrap = document.createElement("div");
+      chipsWrap.className = "people-chips";
+      people.forEach((p) => {
+        const menuLabel = opt.needsMenu && p.menu
+          ? (MENU_OPTIONS.find((m) => m.id === p.menu) || {}).label
+          : null;
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.style.background = opt.color + "22";
+        chip.style.borderColor = opt.color + "55";
+        chip.style.color = "#5c4a3d";
+        chip.textContent = p.nama + (menuLabel ? " · " + menuLabel : "");
+        chipsWrap.appendChild(chip);
+      });
+      row.appendChild(chipsWrap);
+    }
+    statusContainer.appendChild(row);
+  });
+
+  const drinkContainer = document.getElementById("drink-results");
+  drinkContainer.innerHTML = "";
+  DRINK_OPTIONS.forEach((opt) => {
+    const count = responses.filter((r) => r.minuman === opt.id).length;
+    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+    const card = document.createElement("div");
+    card.className = "drink-card";
+    card.innerHTML =
+      '<div class="drink-emoji">' + opt.emoji + "</div>" +
+      '<div class="drink-label">' + opt.label + "</div>" +
+      '<div class="drink-bar-track"><div class="drink-bar-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="drink-meta">' + pct + "% · " + count + " orang</div>";
+    drinkContainer.appendChild(card);
+  });
+
+  document.getElementById("empty-note").classList.toggle("hidden", total !== 0);
+}
+
+function showResultsPage() {
+  document.getElementById("form-page").classList.add("hidden");
+  document.getElementById("results-page").classList.remove("hidden");
+  refreshResults();
+  clearInterval(refreshTimer);
+  refreshTimer = setInterval(refreshResults, 3000);
+}
+
+function showFormPage() {
+  document.getElementById("results-page").classList.add("hidden");
+  document.getElementById("form-page").classList.remove("hidden");
+  clearInterval(refreshTimer);
+}
+
+document.getElementById("view-results-btn").addEventListener("click", showResultsPage);
+document.getElementById("back-btn").addEventListener("click", showFormPage);
+</script>
+
+<!-- ============================================================
+README (baca ini di VS Code, boleh dihapus sebelum publish)
+
+1. Buka https://jsonblob.com di browser.
+2. Di kotak editor, ganti isinya jadi:  []
+3. Klik "Save". URL blob-nya akan muncul di address bar / tombol share,
+   formatnya seperti: https://jsonblob.com/api/jsonBlob/xxxxxxxxxxxx
+4. Copy URL itu, paste ke variabel JSONBLOB_URL di bagian atas <script>
+   pada file ini (baris const JSONBLOB_URL = "...").
+5. Simpan file ini sebagai index.html di dalam repo GitHub kamu.
+6. Push ke GitHub, lalu aktifkan GitHub Pages:
+   Settings → Pages → Source: pilih branch (biasanya "main") → Save.
+7. Tunggu 1-2 menit, link GitHub Pages kamu (contoh:
+   https://namamu.github.io/nama-repo/) sudah bisa dibuka SIAPA SAJA
+   tanpa akun, tanpa login, tanpa install apa pun.
+
+Catatan: JSONBlob gratis & tanpa akun, tapi blob akan otomatis
+terhapus kalau tidak diakses selama 75 hari — cukup aman untuk
+acara sekali jalan seperti ini.
+============================================================ -->
+</body>
+</html>
