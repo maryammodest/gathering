@@ -388,11 +388,11 @@
 /* ============================================================
    1) KONFIGURASI WAJIB
    ------------------------------------------------------------
-   Ganti nilai JSONBLOB_URL di bawah ini dengan URL blob kamu
-   sendiri dari https://jsonblob.com (gratis, tanpa akun).
+   Ganti nilai FIREBASE_DB_URL di bawah ini dengan URL Realtime
+   Database kamu sendiri dari Firebase (gratis, akun Google).
    Caranya ada di instruksi chat / README.
    ============================================================ */
-const JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob/019ff3b6-e63a-7904-b6ac-6b2a6cca584b";
+const FIREBASE_DB_URL = "https://gathering-36691-default-rtdb.asia-southeast1.firebasedatabase.app"; // contoh: "https://beach-poll-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 /* ============================================================
    2) DATA OPSI
@@ -439,27 +439,37 @@ let selectedBanana = null;
 let refreshTimer = null;
 
 /* ============================================================
-   4) STORAGE HELPERS (JSONBlob backend)
+   4) STORAGE HELPERS (Firebase Realtime Database REST API)
+   ------------------------------------------------------------
+   Firebase menyimpan semua jawaban di path /responses.json.
+   GET tanpa header khusus = baca; PUT dengan body JSON = tulis.
+   Ini jalan tanpa SDK/login sama sekali kalau rules-nya public.
    ============================================================ */
-
+// JANGAN diedit — ini cuma ngecek apakah FIREBASE_DB_URL di atas
+// sudah diisi dengan URL asli (bukan placeholder). Yang perlu kamu
+// ganti cuma baris "const FIREBASE_DB_URL = ..." di bagian atas file ini.
 function isConfigured() {
-  return /^https:\/\/jsonblob\.com\/api\/jsonBlob\/.+/.test(JSONBLOB_URL || "");
+  return /^https:\/\/.+\.(firebaseio\.com|firebasedatabase\.app)\/?$/.test(
+    (FIREBASE_DB_URL || "").trim()
+  );
+}
+
+function responsesUrl() {
+  return FIREBASE_DB_URL.replace(/\/$/, "") + "/responses.json";
 }
 
 async function readAllResponses() {
   if (!isConfigured()) return [];
-  const res = await fetch(JSONBLOB_URL, {
-    headers: { Accept: "application/json" },
-  });
+  const res = await fetch(responsesUrl());
   if (!res.ok) throw new Error("Gagal ambil data (status " + res.status + ")");
   const data = await res.json();
   return Array.isArray(data) ? data : [];
 }
 
 async function writeAllResponses(list) {
-  const res = await fetch(JSONBLOB_URL, {
+  const res = await fetch(responsesUrl(), {
     method: "PUT",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(list),
   });
   if (!res.ok) throw new Error("Gagal simpan data (status " + res.status + ")");
@@ -500,7 +510,7 @@ function showNotice(kind, html) {
 if (!isConfigured()) {
   showNotice(
     "setup",
-    "<strong>Belum di-setup!</strong> Isi <code>JSONBLOB_URL</code> di bagian atas kode ini dengan URL blob kamu dari jsonblob.com supaya data bisa tersimpan &amp; live."
+    "<strong>Belum di-setup!</strong> Isi <code>FIREBASE_DB_URL</code> di bagian atas kode ini dengan URL database kamu dari Firebase supaya data bisa tersimpan &amp; live."
   );
 }
 
@@ -663,7 +673,7 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   if (!ok) return;
 
   if (!isConfigured()) {
-    showNotice("setup", "<strong>Belum di-setup!</strong> Isi <code>JSONBLOB_URL</code> dulu di kode ini sebelum data bisa disimpan.");
+    showNotice("setup", "<strong>Belum di-setup!</strong> Isi <code>FIREBASE_DB_URL</code> dulu di kode ini sebelum data bisa disimpan.");
     return;
   }
 
@@ -870,22 +880,42 @@ document.getElementById("back-btn").addEventListener("click", showFormPage);
 <!-- ============================================================
 README (baca ini di VS Code, boleh dihapus sebelum publish)
 
-1. Buka https://jsonblob.com di browser.
-2. Di kotak editor, ganti isinya jadi:  []
-3. Klik "Save". URL blob-nya akan muncul di address bar / tombol share,
-   formatnya seperti: https://jsonblob.com/api/jsonBlob/xxxxxxxxxxxx
-4. Copy URL itu, paste ke variabel JSONBLOB_URL di bagian atas <script>
-   pada file ini (baris const JSONBLOB_URL = "...").
-5. Simpan file ini sebagai index.html di dalam repo GitHub kamu.
-6. Push ke GitHub, lalu aktifkan GitHub Pages:
+1. Buka https://console.firebase.google.com, login pakai akun Google.
+2. Klik "Add project" / "Create a project", kasih nama bebas
+   (misal: beach-poll), lanjut sampai selesai (boleh matikan
+   Google Analytics, gak perlu untuk project ini).
+3. Di sidebar kiri project kamu, klik "Build" > "Realtime Database".
+4. Klik "Create Database". Pilih lokasi server bebas (misal
+   Singapore/asia-southeast1). Waktu ditanya "Security rules",
+   pilih "Start in test mode" lalu klik "Enable".
+5. Setelah database-nya jadi, di bagian atas akan ada URL-nya,
+   bentuknya seperti:
+   https://beach-poll-default-rtdb.asia-southeast1.firebasedatabase.app
+   Copy URL itu (tanpa tanda "/" di paling belakang).
+6. Paste URL itu ke variabel FIREBASE_DB_URL di bagian atas
+   <script> pada file ini (cari baris yang diawali
+   "const FIREBASE_DB_URL").
+7. PENTING - atur rules biar bisa diakses tanpa login: di menu
+   Realtime Database, klik tab "Rules", ganti isinya jadi:
+   {
+     "rules": {
+       ".read": true,
+       ".write": true
+     }
+   }
+   lalu klik "Publish". (Ini bikin data bisa dibaca/ditulis siapa
+   saja yang tahu URL-nya - cukup aman untuk acara internal kayak
+   gini, tapi jangan pakai untuk data sensitif.)
+8. Simpan file ini sebagai index.html di dalam repo GitHub kamu.
+9. Push ke GitHub, lalu aktifkan GitHub Pages:
    Settings → Pages → Source: pilih branch (biasanya "main") → Save.
-7. Tunggu 1-2 menit, link GitHub Pages kamu (contoh:
+10. Tunggu 1-2 menit, link GitHub Pages kamu (contoh:
    https://namamu.github.io/nama-repo/) sudah bisa dibuka SIAPA SAJA
    tanpa akun, tanpa login, tanpa install apa pun.
 
-Catatan: JSONBlob gratis & tanpa akun, tapi blob akan otomatis
-terhapus kalau tidak diakses selama 75 hari — cukup aman untuk
-acara sekali jalan seperti ini.
+Catatan: Firebase Realtime Database gratis (Spark plan) cukup
+generous untuk acara kecil seperti ini, dan datanya tidak akan
+otomatis terhapus selama project-nya masih ada.
 ============================================================ -->
 </body>
 </html>
